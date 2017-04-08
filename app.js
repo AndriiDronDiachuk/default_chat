@@ -7,6 +7,7 @@ var pg = require('pg');
 var first_login = true;
 app.use(express.static('public'));
 var config = "postgres://dron:1111@127.0.0.1:5432/default_chat_dron_db";
+var web_config = process.env.DATABASE_URL;
 var users = [];
 var messages = [];
 
@@ -21,7 +22,7 @@ io.on('connection', function (socket) {
   socket.on('user changed', function (username) {
     console.log(username);
     first_login = true;
-    pg.connect(config, function (err, client, done) {
+    pg.connect(web_config || config, function (err, client, done) {
       client.query("select * from users where name=$1", [username], function (err, result) {
 
         if (result.rowCount < 1) {
@@ -41,7 +42,7 @@ io.on('connection', function (socket) {
             client.query("select * from users where name=$1", [username], function (err, result) {
                 client.query("select * from messages where id_user=$1", [result.rows[0].id], function (err, result) {
                   for(var i = 0;i<result.rowCount;i++){
-                    my_obj = {from: "HISTORY: " + socket.username, message: result.rows[i].message};
+                    my_obj = {from: "History - " + socket.username, message: result.rows[i].message};
                     socket.emit('send message', my_obj);
                   }
                 })
@@ -49,7 +50,6 @@ io.on('connection', function (socket) {
             first_login= false;
           }
           else {
-
             first_login = true;
           }
           socket.username = username;
@@ -73,7 +73,7 @@ io.on('connection', function (socket) {
   });
 
   socket.on('send message', function (obj) {
-    pg.connect(config, function (err, client, done) {
+    pg.connect(web_config || config, function (err, client, done) {
       client.query("select id from users where name=$1", [socket.username], function (err, result) {
         console.log();
         client.query("insert into messages(id_user, message) values($1, $2)", [result.rows[0].id, obj.message], function (err, result) {
@@ -84,6 +84,6 @@ io.on('connection', function (socket) {
   });
 
 });
-server.listen(3000, function () {
+server.listen((process.env.PORT || 3000), function () {
   console.log("Server started on port 3000.");
 });
