@@ -16,11 +16,7 @@ app.get('/', function (req, res) {
 });
 
 io.on('connection', function (socket) {
-
-  console.log("Connected");
-
   socket.on('user changed', function (username) {
-    console.log(username);
     first_login = true;
     pg.connect(web_config || config, function (err, client, done) {
       client.query("select * from users where name=$1", [username], function (err, result) {
@@ -62,10 +58,7 @@ io.on('connection', function (socket) {
 
   })
 
-
-
   socket.on('disconnect', function () {
-    console.log("Disconnected");
     users.splice(users.indexOf(socket.username), 1);
     io.emit('user changed', {users: users});
     first_login = true;
@@ -82,8 +75,8 @@ io.on('connection', function (socket) {
     })
     socket.broadcast.emit('send message', obj);
   });
-
 });
+
 server.listen((process.env.PORT || 3000), function () {
   console.log("Server started on port 3000.");
 });
