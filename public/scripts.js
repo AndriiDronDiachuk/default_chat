@@ -59,7 +59,7 @@ $('#inputbox').submit(function(event) {
     from: currentUser,
     message: $message.val()
   };
-  console.log(sendObj);
+  //console.log(sendObj);
   socket.emit('send message', sendObj);
   $message.val('');
 
@@ -69,24 +69,14 @@ $('#inputbox').submit(function(event) {
       <li class="list-group-item">${punch}</li>
     `);
     var txtToSpeech = responsiveVoice.speak("" + punch + "");
-    console.log(txtToSpeech);
+    //console.log(txtToSpeech);
 
   });
 
 });
 
-/*
- * Check for browser support
- */
+
 var supportMsg = document.getElementById('msg');
-
-// if ('speechSynthesis' in window) {
-// 	supportMsg.innerHTML = 'Your browser <strong>supports</strong> speech synthesis.';
-// } else {
-// 	supportMsg.innerHTML = 'Sorry your browser <strong>does not support</strong> speech synthesis.<br>Try this in <a href="http://www.google.co.uk/intl/en/chrome/browser/canary.html">Chrome Canary</a>.';
-// 	supportMsg.classList.add('not-supported');
-// }
-
 
 // Get the 'speak' button
 var button = document.getElementById('speak');
@@ -161,6 +151,15 @@ var button = document.getElementById('speak');
 button.addEventListener('click', function(e) {
 	if (speechMsgInput.value.length > 0) {
 		speak(speechMsgInput.value);
+    console.log(speak(speechMsgInput.value));
+    var audio = document.getElementById('beat');
+    if (audio.paused){
+      audio.play();
+    }
+    else{
+      audio.pause();
+      audio.currentTime = 0;
+    }
 	}
 });
 
