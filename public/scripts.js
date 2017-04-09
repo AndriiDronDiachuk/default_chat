@@ -4,8 +4,9 @@ var currentUser = null;
 var $username = $('#username-box');
 var $login = $('#login');
 var $container = $('#container');
+var $settings = $('#settings');
 var userList = $('#user');
-var $message = $('#message');
+var $message = $('#speech-msg');
 var $messages = $('#messages');
 
 $('#form-username').submit(function(event) {
@@ -21,6 +22,7 @@ $('#form-username').submit(function(event) {
   $username.val('');
   $login.slideUp('fast');
   $container.slideDown('fast');
+  $settings.slideDown('fast')
   $message.focus();
 
   socket.on('user changed', function (data) {
@@ -32,11 +34,11 @@ $('#form-username').submit(function(event) {
 
     if (data.users.length > 0) {
       for (var  i = 0; i < data.users.length; i++){
-        list+= '<li class="list-group-item list-group-item-success">'+data.users[i]+'</li>';
+        list+= '<li class="list-group-item list-group-item-success text-center center-block">'+data.users[i]+'</li>';
       }
     }
     if (list == '')
-      list+= '<li class="list-group-item list-group-item-danger">You are alone here</li>';
+      list+= '<li class="list-group-item list-group-item-danger text-center center-block">You are alone here</li>';
 
     userList.html(list);
     list = '';
@@ -61,20 +63,29 @@ $('#inputbox').submit(function(event) {
   socket.emit('send message', sendObj);
   $message.val('');
 
-});
+  $('#send-punch').click(function(){
+    var punch = $('#message').val();
+    $('#punches').append(`
+      <li class="list-group-item">${punch}</li>
+    `);
+    var txtToSpeech = responsiveVoice.speak("" + punch + "");
+    console.log(txtToSpeech);
 
+  });
+
+});
 
 /*
  * Check for browser support
  */
 var supportMsg = document.getElementById('msg');
 
-if ('speechSynthesis' in window) {
-	supportMsg.innerHTML = 'Your browser <strong>supports</strong> speech synthesis.';
-} else {
-	supportMsg.innerHTML = 'Sorry your browser <strong>does not support</strong> speech synthesis.<br>Try this in <a href="http://www.google.co.uk/intl/en/chrome/browser/canary.html">Chrome Canary</a>.';
-	supportMsg.classList.add('not-supported');
-}
+// if ('speechSynthesis' in window) {
+// 	supportMsg.innerHTML = 'Your browser <strong>supports</strong> speech synthesis.';
+// } else {
+// 	supportMsg.innerHTML = 'Sorry your browser <strong>does not support</strong> speech synthesis.<br>Try this in <a href="http://www.google.co.uk/intl/en/chrome/browser/canary.html">Chrome Canary</a>.';
+// 	supportMsg.classList.add('not-supported');
+// }
 
 
 // Get the 'speak' button
@@ -144,6 +155,7 @@ function speak(text) {
 	window.speechSynthesis.speak(msg);
 }
 
+var button = document.getElementById('speak');
 
 // Set up an event listener for when the 'speak' button is clicked.
 button.addEventListener('click', function(e) {

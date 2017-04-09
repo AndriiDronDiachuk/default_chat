@@ -2,6 +2,7 @@ body {
   padding: 50px;
   font-size: 14px;
   font-family: monospace;
+  padding-top: 10px;
 }
 
 a, a:hover {
@@ -9,9 +10,26 @@ a, a:hover {
   text-decoration: none;
 }
 
-#container {
+#container,
+#settings {
   display: none;
+  width: 800px;
+
 }
+
+.list-group-item-success,
+.list-group-item-danger{
+  width: 200px;
+}
+
+#send-button{
+  vertical-align: center;
+}
+
+.fa{
+  font-weight: bold;
+}
+
 
 *, *:before, *:after {
   -moz-box-sizing: border-box;
